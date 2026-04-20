@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Aviorix — Creative Video Editor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --black: #0c0c0c;
+    --white: #fafaf8;
+    --muted: #888780;
+    --accent: #3d9e75;
+    --border: rgba(0,0,0,0.08);
+    --glass: rgba(250, 250, 248, 0.90);
+    --tag-bg: #f0f0f0;
+  }
+
+  @keyframes revealUp {
+    from { opacity: 0; transform: translateY(40px); filter: blur(10px); }
+    to { opacity: 1; transform: translateY(0); filter: blur(0); }
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--white);
+    color: var(--black);
+    font-size: 15px;
+    line-height: 1.6;
+    overflow-x: hidden;
+    opacity: 0;
+    animation: revealUp 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  }
+
+  /* STICKY MENU BAR - Locked to top */
+  nav {
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    right: 0; 
+    z-index: 9999;
+    background: var(--glass);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 5%; height: 70px;
+  }
+  .nav-logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 26px; letter-spacing: -1px;
+    color: var(--black); text-decoration: none; cursor: pointer;
+  }
+  .nav-links { display: flex; gap: 40px; }
+  .nav-links a {
+    font-size: 14px; color: var(--muted); text-decoration: none;
+    font-weight: 500; cursor: pointer; transition: 0.3s ease;
+  }
+  .nav-links a:hover { color: var(--black); transform: translateY(-1px); }
+
+  .hero {
+    height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 0 5%;
+    max-width: 1200px; margin: 0 auto;
+  }
+
+  .hero-header {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 25px;
+  }
+
+  /* UPDATED PFP STYLING - Standard HD Rendering */
+  .hero-pfp {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    object-fit: cover;
+    /* Changed to auto to prevent contrast glitching while maintaining quality */
+    image-rendering: auto; 
+    border: 1px solid var(--border);
+    background: #000;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+  }
+
+  .status {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-size: 12px; font-weight: 500; text-transform: uppercase;
+    letter-spacing: 2px; color: var(--accent);
+  }
+  .pulse { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 10px var(--accent); animation: glow 2s infinite; }
+  @keyframes glow { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(1.2); } 100% { opacity: 1; transform: scale(1); } }
+
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(65px, 12vw, 130px);
+    line-height: 0.85; margin-bottom: 35px; letter-spacing: -4px;
+  }
+  .hero h1 span { color: var(--muted); font-style: italic; font-weight: 400; }
+  .hero p { max-width: 550px; font-size: 20px; color: var(--muted); font-weight: 300; margin-bottom: 50px; }
+
+  .section { padding: 120px 5%; max-width: 1200px; margin: 0 auto; }
+  .label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 3px; margin-bottom: 60px; display: block; }
+  
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 50px; }
+  .work-card {
+    border-radius: 20px; overflow: hidden; background: #fff;
+    border: 1px solid var(--border); transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .work-card:hover { transform: translateY(-10px) scale(1.02); box-shadow: 0 30px 60px rgba(0,0,0,0.1); }
+  
+  .video-box { position: relative; padding-bottom: 56.25%; background: #000; overflow: hidden; }
+  .video-box iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+
+  .work-info { padding: 30px; display: flex; justify-content: space-between; align-items: flex-start; }
+  .work-info h3 { font-family: 'DM Serif Display', serif; font-size: 22px; margin-bottom: 8px; }
+  .work-info p { color: var(--muted); font-size: 15px; }
+  .tag { background: var(--tag-bg); padding: 6px 14px; border-radius: 30px; font-size: 12px; font-weight: 500; }
+
+  .about-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+  .about-text h2 { font-family: 'DM Serif Display', serif; font-size: 48px; line-height: 1.1; margin-bottom: 30px; }
+  .skill-list { list-style: none; }
+  .skill-item { 
+    padding: 20px 0; border-bottom: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+
+  .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 20px; }
+  .contact-card {
+    background: #fff; padding: 40px; border-radius: 20px; border: 1px solid var(--border);
+    transition: 0.3s;
+  }
+  .contact-card:hover { border-color: var(--black); }
+  .contact-card h4 { font-size: 12px; text-transform: uppercase; color: var(--muted); margin-bottom: 15px; letter-spacing: 1px; }
+  .contact-card a, .contact-card p { font-size: 24px; color: var(--black); text-decoration: none; font-family: 'DM Serif Display', serif; }
+
+  footer { text-align: center; padding: 60px 0; color: var(--muted); font-size: 12px; border-top: 1px solid var(--border); margin-top: 100px; }
+
+  .fade-up { opacity: 0; transform: translateY(22px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 768px) {
+    nav { padding: 0 20px; }
+    .nav-links { display: none; }
+    .grid { grid-template-columns: 1fr; }
+    .about-layout { grid-template-columns: 1fr; gap: 40px; }
+    .hero h1 { font-size: 60px; }
+    .hero-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo" onclick="scrollToSection('home')">Aviorix</div>
+  <div class="nav-links">
+    <a onclick="scrollToSection('works')">Portfolio</a>
+    <a onclick="scrollToSection('about')">Process</a>
+    <a onclick="scrollToSection('contact')">Contact</a>
+  </div>
+</nav>
+
+<section class="hero" id="home">
+  <div class="hero-header">
+    <img src="52ec7715382f0f817f930daea83bb8a0.jpg" alt="Parth Aviorix" class="hero-pfp">
+    <div class="status"><span class="pulse"></span> Open for commissions</div>
+  </div>
+  <h1>Parth<br><span>Aviorix</span></h1>
+  <p>Professional video editor specializing in dynamic gaming narratives and high-retention financial content.</p>
+</section>
+
+<section class="section" id="works">
+  <span class="label">Featured Projects</span>
+  <div class="grid">
+    <div class="work-card fade-up">
+      <div class="video-box">
+        <iframe src="https://www.youtube.com/embed/F4NLi1nAK28?autoplay=1&mute=1&loop=1&playlist=F4NLi1nAK28&controls=0&modestbranding=1&rel=0" allow="autoplay"></iframe>
+      </div>
+      <div class="work-info">
+        <div>
+          <h3>I Mastered Ryu</h3>
+          <p>Advanced Gaming Narrative</p>
+        </div>
+        <span class="tag">Gaming</span>
+      </div>
+    </div>
+
+    <div class="work-card fade-up">
+      <div class="video-box">
+        <iframe src="https://www.youtube.com/embed/0dLAyNhWDvk?autoplay=1&mute=1&loop=1&playlist=0dLAyNhWDvk&controls=0&modestbranding=1&rel=0" allow="autoplay"></iframe>
+      </div>
+      <div class="work-info">
+        <div>
+          <h3>Middle Class Trap</h3>
+          <p>Educational Finance Edit</p>
+        </div>
+        <span class="tag">Finance</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="about">
+  <span class="label">The Process</span>
+  <div class="about-layout fade-up">
+    <div class="about-text">
+      <h2>Building stories that capture attention.</h2>
+      <p>Every cut is intentional. I focus on pacing, soundscape, and psychological triggers that keep a viewer watching from the first second to the last.</p>
+    </div>
+    <div class="skill-list">
+      <div class="skill-item"><span>Dynamic Retention Editing</span> <span>✔</span></div>
+      <div class="skill-item"><span>Cinematic Sound Design</span> <span>✔</span></div>
+      <div class="skill-item"><span>Financial Data Visualization</span> <span>✔</span></div>
+      <div class="skill-item"><span>High-Energy Pacing</span> <span>✔</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="contact">
+  <span class="label">Get in Touch</span>
+  <div class="contact-grid fade-up">
+    <div class="contact-card">
+      <h4>Email Me</h4>
+      <a href="mailto:theaviorix@gmail.com">theaviorix@gmail.com</a>
+    </div>
+    <div class="contact-card">
+      <h4>Call / WhatsApp</h4>
+      <p>+91 7850024974</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  &copy; 2026 Aviorix Portfolio. Crafted by Parth.
+</footer>
+
+<script>
+  function scrollToSection(id) {
+    const element = document.getElementById(id);
+    if (element) {
+      const offset = 70;
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth"
+      });
+    }
+  }
+
+  const els = document.querySelectorAll('.fade-up');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+  }, { threshold: 0.1 });
+  els.forEach(el => obs.observe(el));
+
+  window.onload = () => {
+    const frames = document.querySelectorAll('iframe');
+    frames.forEach(f => {
+      const currentSrc = f.src;
+      f.src = currentSrc;
+    });
+  };
+</script>
+
+</body>
+</html>
