@@ -60,7 +60,8 @@
     border-radius: 24px; overflow: hidden;
   }
 
-  #reelVideo { width: 100%; height: 100%; object-fit: cover; }
+  /* Iframe must fill the container */
+  #player { width: 100%; height: 100%; pointer-events: none; }
 
   #reelContainer.floating {
     position: fixed; bottom: 30px; right: 30px; height: 350px; width: auto; z-index: 10001;
@@ -75,7 +76,6 @@
     cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center;
     backdrop-filter: blur(5px); transition: 0.2s;
   }
-  .reel-btn:hover { background: var(--black); }
 
   .hero-content {
     position: absolute; left: 5%; color: var(--black); z-index: 1001; transition: opacity 0.4s;
@@ -119,12 +119,10 @@
 
   <div id="reelContainer">
     <div class="reel-controls">
-      <button class="reel-btn" id="muteBtn" onclick="toggleMute()">🔇</button>
+      <button class="reel-btn" id="muteBtn" onclick="toggleMute()">🔊</button>
       <button class="reel-btn" id="restoreBtn" style="display:none;" onclick="restoreReel()" title="Restore to Top">↗</button>
     </div>
-    <video id="reelVideo" loop playsinline autoplay muted>
-      <source src="ReelZoomed1.mp4" type="video/mp4">
-    </video>
+    <div id="player"></div>
   </div>
 </div>
 
@@ -163,14 +161,58 @@
 <footer>&copy; 2026 Aviorix Portfolio.</footer>
 
 <script>
-  const video = document.getElementById('reelVideo');
+  // 1. YouTube Player API Setup
+  let player;
+  const tag = document.createElement('script');
+  tag.src = "https://www.youtube.com/iframe_api";
+  const firstScriptTag = document.getElementsByTagName('script')[0];
+  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+  function onYouTubeIframeAPIReady() {
+    player = new YT.Player('player', {
+      videoId: 'iXVf6Gbezfw',
+      playerVars: {
+        'autoplay': 1,
+        'controls': 0,
+        'loop': 1,
+        'playlist': 'iXVf6Gbezfw', // Required for looping
+        'modestbranding': 1,
+        'showinfo': 0,
+        'rel': 0,
+        'iv_load_policy': 3,
+        'mute': 0 // We'll try unmuted, but browser may force mute
+      },
+      events: {
+        'onReady': onPlayerReady,
+        'onStateChange': onPlayerStateChange
+      }
+    });
+  }
+
+  function onPlayerReady(event) {
+    event.target.playVideo();
+  }
+
+  // Ensures perfect looping
+  function onPlayerStateChange(event) {
+    if (event.data === YT.PlayerState.ENDED) {
+      player.playVideo();
+    }
+  }
+
+  // 2. Control Logic
   const reelContainer = document.getElementById('reelContainer');
   const muteBtn = document.getElementById('muteBtn');
   const restoreBtn = document.getElementById('restoreBtn');
 
   function toggleMute() {
-    video.muted = !video.muted;
-    muteBtn.textContent = video.muted ? '🔇' : '🔊';
+    if (player.isMuted()) {
+      player.unMute();
+      muteBtn.textContent = '🔊';
+    } else {
+      player.mute();
+      muteBtn.textContent = '🔇';
+    }
   }
 
   window.addEventListener('scroll', () => {
@@ -184,23 +226,13 @@
   });
 
   function restoreReel() {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   document.getElementById('themeToggle').addEventListener('click', function() {
     const isDark = document.body.getAttribute('data-theme') === 'dark';
     document.body.setAttribute('data-theme', isDark ? 'light' : 'dark');
     this.textContent = isDark ? 'DARK MODE' : 'LIGHT MODE';
-  });
-
-  // Ensure autoplay works (must be muted)
-  window.addEventListener('load', () => {
-    video.play().catch(error => {
-      console.log("Autoplay prevented by browser. User interaction needed to play sound.");
-    });
   });
 </script>
 
