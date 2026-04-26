@@ -258,22 +258,13 @@
   .section { padding: 120px 5%; max-width: 1200px; margin: 0 auto; }
   .label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 3px; margin-bottom: 60px; display: block; }
   
-  /* Works grid — 3 col when reel card is present */
-  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 50px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 50px; }
   
   .work-card {
     border-radius: 20px; overflow: hidden; background: #fff;
     border: 1px solid var(--border); transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   }
   .work-card:hover { transform: translateY(-10px) scale(1.02); box-shadow: 0 30px 60px rgba(0,0,0,0.1); }
-
-  /* Reel work card — portrait */
-  .work-card.reel-card-portfolio {
-    grid-row: span 1;
-  }
-  .work-card.reel-card-portfolio .video-box {
-    padding-bottom: 177.78%; /* 9:16 */
-  }
 
   .video-box { position: relative; padding-bottom: 56.25%; background: #000; overflow: hidden; }
   .video-box iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
@@ -282,8 +273,6 @@
   .work-info h3 { font-family: 'DM Serif Display', serif; font-size: 22px; margin-bottom: 8px; }
   .work-info p { color: var(--muted); font-size: 15px; }
   .tag { background: var(--tag-bg); padding: 6px 14px; border-radius: 30px; font-size: 12px; font-weight: 500; }
-  .tag.reel-tag { background: #0c0c0c; color: #fff; }
-
   .about-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
   .about-text h2 { font-family: 'DM Serif Display', serif; font-size: 48px; line-height: 1.1; margin-bottom: 30px; }
   .skill-list { list-style: none; }
@@ -372,25 +361,6 @@
 <section class="section" id="works">
   <span class="label">Featured Projects</span>
   <div class="grid">
-
-    <!-- ── Professional Reel card (portrait, top-left) ── -->
-    <div class="work-card reel-card-portfolio fade-up" style="grid-column: span 1;">
-      <div class="video-box" style="padding-bottom: 177.78%;">
-        <iframe
-          src="https://www.youtube.com/embed/HylSdwVUexg?autoplay=1&mute=1&loop=1&playlist=HylSdwVUexg&controls=0&modestbranding=1&rel=0&playsinline=1"
-          allow="autoplay; encrypted-media"
-          allowfullscreen
-          loading="lazy"
-        ></iframe>
-      </div>
-      <div class="work-info">
-        <div>
-          <h3>Professional Reel</h3>
-          <p>Showcase — Finance Edit</p>
-        </div>
-        <span class="tag reel-tag">Reel</span>
-      </div>
-    </div>
 
     <!-- ── Gaming card ── -->
     <div class="work-card fade-up">
